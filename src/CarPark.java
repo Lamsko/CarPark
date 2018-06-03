@@ -42,7 +42,6 @@ public class CarPark implements Runnable {
 		// Create queue, set their names and start their threads
 
 			queue = new CarQueue(controller, this,1, 10);
-			queue.setName("Kolejka");
 			queue.start();
 
 		// Start car park thread

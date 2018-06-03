@@ -7,7 +7,6 @@ public class CarQueue implements Runnable {
 	private CarPark carPark;
 	private LinkedList<Car> queue;
 	private final int queueCapacity;
-	private String name;
 	private int queueNbr;
 	private Thread thread;
 
@@ -19,12 +18,6 @@ public class CarQueue implements Runnable {
 		queueCapacity = size;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-
-		// Send queue name to GUI
-		controller.setQueueName(queueNbr, name);
-	}
 
 	/**
 	 * Retrieves the car first in queue.

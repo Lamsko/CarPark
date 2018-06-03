@@ -11,9 +11,6 @@ public class Controller {
 		gui.setLblQueueSize(queue, size);
 	}
 
-	public void setQueueName(int queue, String queueName) {
-		gui.setQueueName(queue, queueName);
-	}
 
 	public void appendLogEntry(String logEntry, Color color) {
 		gui.appendLogEntry(logEntry, color);
