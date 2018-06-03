@@ -20,15 +20,9 @@ import javax.swing.text.StyleContext;
 public class GUI {
 	private Controller controller;
 	private JFrame frame;               // The Main windows
-	private JLabel lblQueueOne;
-	private JLabel lblQueueTwo;
-	private JLabel lblQueueThree;
-	private JLabel lblQueueFour;
+	private JLabel lblQueue;
 	private JLabel lblCarParkSize;      // Size of car allow
-	private JLabel lblQueueOneSize;     // Size of entrance 1
-	private JLabel lblQueueTwoSize;     // Size of entrance 2
-	private JLabel lblQueueThreeSize;   // Size of entrance 3
-	private JLabel lblQueueFourSize;    // Size of entrance 4
+	private JLabel lblQueueSize;     // Size of entrance 1
 	private JLabel lblCarParkCapacity;
 	private JTextPane log;              // Log
 
@@ -41,12 +35,12 @@ public class GUI {
 		frame.setBounds(0, 0, 800, 400);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
-		frame.setTitle("Car Park with Threadpool");
+		frame.setTitle("Symulator garażu");
 		initializeGUI();					// Fill in components
 		frame.setVisible(true);
 		frame.setResizable(false);			// Prevent user from change size
 		frame.setLocationRelativeTo(null);	// Start middle screen
-		CarPark carPark = new CarPark(controller, 50);
+		CarPark carPark = new CarPark(controller, 10);
 		carPark.open();
 	}
 
@@ -68,7 +62,7 @@ public class GUI {
 		JPanel pnlCarPark = new JPanel();
 		pnlCarPark.setLayout(new BorderLayout());
 		pnlCarPark.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder
-				(Color.black), "Car Park"));
+				(Color.black), "Garaż"));
 
 
 		// Log
@@ -83,8 +77,8 @@ public class GUI {
 
 
 		// Car Park Panel
-		JLabel lblCarPark = new JLabel("Parked: ");
-		lblCarParkCapacity = new JLabel("Capacity : ");
+		JLabel lblCarPark = new JLabel("Zaparkowane: ");
+		lblCarParkCapacity = new JLabel("Pojemność : ");
 		lblCarPark.setHorizontalAlignment(JLabel.CENTER);
 		lblCarParkCapacity.setHorizontalAlignment(JLabel.CENTER);
 		lblCarParkSize = new JLabel("0");
@@ -95,55 +89,23 @@ public class GUI {
 		pnlCarPark.add(lblCarParkCapacity, BorderLayout.SOUTH);
 
 		// Create queue panels
-		JPanel pnlQueueOne = new JPanel();
-		JPanel pnlQueueTwo = new JPanel();
-		JPanel pnlQueueThree = new JPanel();
-		JPanel pnlQueueFour = new JPanel();
-		pnlQueueOne.setLayout(new GridBagLayout());
-		pnlQueueTwo.setLayout(new GridBagLayout());
-		pnlQueueThree.setLayout(new GridBagLayout());
-		pnlQueueFour.setLayout(new GridBagLayout());
+		JPanel pnlQueue = new JPanel();
+		pnlQueue.setLayout(new GridBagLayout());
 
 		// Queue 1
-		lblQueueOne = new JLabel("Queue 1: ");
-		lblQueueOneSize = new JLabel("0");
-		lblQueueOneSize.setFont(lblQueueOneSize.getFont().deriveFont(fontSize));
-		pnlQueueOne.add(lblQueueOne);
-		pnlQueueOne.add(lblQueueOneSize);
+		lblQueue = new JLabel("Kolejka: ");
+		lblQueueSize = new JLabel("0");
+		lblQueueSize.setFont(lblQueueSize.getFont().deriveFont(fontSize));
+		pnlQueue.add(lblQueue);
+		pnlQueue.add(lblQueueSize);
 
-
-		// Queue 2
-		lblQueueTwo = new JLabel("Queue 2: ");
-		lblQueueTwoSize = new JLabel("0");
-		lblQueueTwoSize.setFont(lblQueueTwoSize.getFont().deriveFont(fontSize));
-		pnlQueueTwo.add(lblQueueTwo);
-		pnlQueueTwo.add(lblQueueTwoSize);
-
-
-		// Queue 3
-		lblQueueThree = new JLabel("Queue 3: ");
-		lblQueueThreeSize = new JLabel("0");
-		lblQueueThreeSize.setFont(lblQueueThreeSize.getFont().deriveFont(fontSize));
-		pnlQueueThree.add(lblQueueThree);
-		pnlQueueThree.add(lblQueueThreeSize);
-
-
-		// Queue 4
-		lblQueueFour = new JLabel("Queue 4: ");
-		lblQueueFourSize = new JLabel("0");
-		lblQueueFourSize.setFont(lblQueueFourSize.getFont().deriveFont(fontSize));
-		pnlQueueFour.add(lblQueueFour);
-		pnlQueueFour.add(lblQueueFourSize);
 
 		// Fill Main panels
 		left.add(new JPanel());
-		left.add(pnlQueueTwo);
 		left.add(new JPanel());
-		left.add(pnlQueueOne);
+		left.add(pnlQueue);
 		left.add(pnlCarPark);
-		left.add(pnlQueueThree);
 		left.add(new JPanel());
-		left.add(pnlQueueFour);
 		left.add(new JPanel());
 		right.add(pnlLog);
 	}
@@ -152,29 +114,31 @@ public class GUI {
 		// Get correct label
 		JLabel lbl;
 		if (queue == 0) lbl = lblCarParkSize;
-		else if (queue == 1) lbl = lblQueueOneSize;
-		else if (queue == 2) lbl = lblQueueTwoSize;
-		else if (queue == 3) lbl = lblQueueThreeSize;
-		else lbl = lblQueueFourSize;
+		else lbl = lblQueueSize;
 
-		// Fix "car" and "cars" grammar
-		String carGrammar = size == 1 ? "car" : "cars";
+		String carGrammar;
+		if (size == 1 ) {
+			carGrammar = "samochód";
+		}
+		else if (size == 2 || size == 3 || size == 4){
+			carGrammar = "samochody";
+		}
+		else {
+			carGrammar = "samochodów";
+		}
 
 		SwingUtilities.invokeLater(() -> lbl.setText(size + " " + carGrammar));
 	}
 
 	public void setCarParkCapacity(int capacity) {
-		SwingUtilities.invokeLater(() -> lblCarParkCapacity.setText("Capacity: " + capacity));
+		SwingUtilities.invokeLater(() -> lblCarParkCapacity.setText("Pojemność: " + capacity));
 	}
 
 	public void setQueueName(int queue, String queueName) {
 		JLabel lbl;
-		if (queue == 1) lbl = lblQueueOne;
-		else if (queue == 2) lbl = lblQueueTwo;
-		else if (queue == 3) lbl = lblQueueThree;
-		else lbl = lblQueueFour;
+		lbl = lblQueue;
 		final JLabel finalLbl = lbl;
-		SwingUtilities.invokeLater(() -> finalLbl.setText(queueName + " Entrance: "));
+		SwingUtilities.invokeLater(() -> finalLbl.setText(queueName + " wjazd: "));
 	}
 
 	/**

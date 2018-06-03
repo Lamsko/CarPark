@@ -66,7 +66,7 @@ public class CarQueue implements Runnable {
 			queue.add(new Car(carPark));
 
 			// Print to log
-			controller.appendLogEntry("Car queued at " + name + " entrance", Color.YELLOW);
+			controller.appendLogEntry("Samochód w kolejce do wjazdu", Color.YELLOW);
 
 			// Update GUI
 			controller.setLblQueueSize(getQueueNbr(), queue.size());

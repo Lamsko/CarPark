@@ -7,7 +7,7 @@ public class CarPark implements Runnable {
 	private Controller controller;
 	private Car[] parkedCars;       // Cars currently parked in the parking house
 	private Status[] statuses;      // The parking spots' statuses
-	private CarQueue[] queues;
+	private CarQueue queue;
 	private int garageCount;        // Number of cars in the parking house
 	private boolean operational;     // The parking house's operational statuses
 	private int capacity;
@@ -18,7 +18,6 @@ public class CarPark implements Runnable {
 		this.controller = controller;
 		this.capacity = capacity;
 		this.mutex = new Object();
-		queues = new CarQueue[4];
 	}
 
 	public void start() {
@@ -40,17 +39,11 @@ public class CarPark implements Runnable {
 		// Send capacity to GUI
 		controller.setCarParkCapacity(capacity);
 
-		// Create queues, set their names and start their threads
-		String name;
-		for (int i = 0; i < queues.length; i++) {
-			queues[i] = new CarQueue(controller, this, i + 1, 50);
-			if (i == 0) name = "West";
-			else if (i == 1) name = "North";
-			else if (i == 2) name = "East";
-			else name = "South";
-			queues[i].setName(name);
-			queues[i].start();
-		}
+		// Create queue, set their names and start their threads
+
+			queue = new CarQueue(controller, this,1, 10);
+			queue.setName("Kolejka");
+			queue.start();
 
 		// Start car park thread
 		operational = true;
@@ -93,7 +86,7 @@ public class CarPark implements Runnable {
 			garageCount++;
 
 			// Print to log
-			controller.appendLogEntry("Car entered the car park", Color.GREEN);
+			controller.appendLogEntry("Samochód wjechał do garażu", Color.GREEN);
 
 			// Update GUI
 			controller.setLblQueueSize(0, garageCount);
@@ -113,7 +106,7 @@ public class CarPark implements Runnable {
 			garageCount--;
 
 			// Print to log
-			controller.appendLogEntry("Car left the car park", Color.RED);
+			controller.appendLogEntry("Samochód wyjechał z garażu", Color.RED);
 
 			// Update GUI
 			controller.setLblQueueSize(0, garageCount);
@@ -147,12 +140,11 @@ public class CarPark implements Runnable {
 
 	/**
 	 * Checks if there's space in the car park,
-	 * then retrieves a car from one of the four queues,
+	 * then retrieves a car from one of the four queue,
 	 * then parks the car though an executor service that calls the cars run method.
 	 * Finally checks if there's any cars to unpark.
 	 */
 	public void run() {
-		Random rnd = new Random();
 		Car car;
 		int next;
 		ExecutorService executor = Executors.newFixedThreadPool(10);
@@ -165,11 +157,8 @@ public class CarPark implements Runnable {
 			// If there's an open parking spot
 			if (next != -1) {
 
-				// Pick a queue on random
-				int currentQueue = rnd.nextInt(4);
-
 				// Get car from the randomized queue
-				car = queues[currentQueue].getCar();
+				car = queue.getCar();
 				if (car != null) {
 					// Park the car
 					car.setParkingSpot(next);
