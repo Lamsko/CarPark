@@ -1,7 +1,4 @@
-import java.awt.Color;
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.awt.*;
 
 public class CarPark implements Runnable {
 	private Controller controller;
@@ -146,7 +143,6 @@ public class CarPark implements Runnable {
 	public void run() {
 		Car car;
 		int next;
-		ExecutorService executor = Executors.newFixedThreadPool(10);
 
 		while (operational) {
 
@@ -161,7 +157,7 @@ public class CarPark implements Runnable {
 				if (car != null) {
 					// Park the car
 					car.setParkingSpot(next);
-					executor.execute(car);
+					car.run();
 				}
 			}
 
