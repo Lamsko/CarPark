@@ -7,7 +7,7 @@ public class CarPark implements Runnable {
 	private CarQueue queue;          // Kolejka do wjazdu
 	private int garageCount;        // Ilosc samochodow na parkingu
 	private boolean operational;     // Informacja o tym czy parking działa
-	private int capacity;
+	private int capacity;            // Pojemność garażu
 	private final Object mutex;
 	private Thread thread;
 
