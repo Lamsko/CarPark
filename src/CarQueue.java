@@ -1,4 +1,4 @@
-import java.awt.Color;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -20,15 +20,14 @@ public class CarQueue implements Runnable {
 
 
 	/**
-	 * Retrieves the car first in queue.
-	 * @return The car first in queue.
+	 * Zwraca pierwszy samochod z kolejki
 	 */
 	public Car getCar() {
 		Car car = null;
 		if (queue.size() > 0) {
 			car = queue.removeFirst();
 
-			// Update GUI
+			// Aktualizacja GUI
 			controller.setLblQueueSize(queueNbr, queue.size());
 		}
 		return car;
@@ -46,25 +45,25 @@ public class CarQueue implements Runnable {
 	}
 
 	/**
-	 * Creates and places new cars in the queue while there's still room in it.
+	 * Tworzy nowe samochody w kolejce dopoki jest w niej miejsce
 	 */
 	public void run() {
 		Random rnd = new Random();
 		int sleepTime;
 
-		// While there's space in queue
+		// Dopoki jest miejsce w kolejce
 		while (queue.size() < queueCapacity) {
 
-			// Add car to queue
+			// Dodaj samochod
 			queue.add(new Car(carPark));
 
-			// Print to log
+			// Wypisz w logu
 			controller.appendLogEntry("Samochód w kolejce do wjazdu", Color.YELLOW);
 
-			// Update GUI
+			// Aktualizacja GUI
 			controller.setLblQueueSize(getQueueNbr(), queue.size());
 
-			// Put queue to sleep for some time
+			// Odczekaj chwile
 			sleepTime = rnd.nextInt(2000) + 500;
 			try {
 				Thread.sleep(sleepTime);

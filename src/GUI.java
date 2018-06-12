@@ -1,28 +1,16 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import java.awt.*;
 
 public class GUI {
 	private Controller controller;
-	private JFrame frame;               // The Main windows
+	private JFrame frame;               // Główne okno
 	private JLabel lblQueue;
-	private JLabel lblCarParkSize;      // Size of car allow
-	private JLabel lblQueueSize;     // Size of entrance 1
+	private JLabel lblCarParkSize;      // Rozmiar parkingu
+	private JLabel lblQueueSize;     // Rozmiar kolejki
 	private JLabel lblCarParkCapacity;
 	private JTextPane log;              // Log
 
@@ -36,10 +24,10 @@ public class GUI {
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.setTitle("Symulator garażu");
-		initializeGUI();					// Fill in components
+		initializeGUI();					// Wypełnia komponenty
 		frame.setVisible(true);
-		frame.setResizable(false);			// Prevent user from change size
-		frame.setLocationRelativeTo(null);	// Start middle screen
+		frame.setResizable(false);			// Zablokowanie zmiany rozmiaru
+		frame.setLocationRelativeTo(null);	// Wyśrodkowanie
 		CarPark carPark = new CarPark(controller, 10);
 		carPark.open();
 	}
@@ -47,18 +35,18 @@ public class GUI {
 	public void initializeGUI() {
 		float fontSize = 15f;
 
-		// Create Main panels
+		// Główne panele
 		JPanel left = new JPanel();
 		left.setLayout(new GridLayout(3, 3));
 		JPanel right = new JPanel();
 		right.setPreferredSize(new Dimension(250, 800));
 		right.setLayout(new GridLayout(0, 1));
 
-		// Add panels to frame
+		// Dodanie paneli do głównego okna
 		frame.add(left, BorderLayout.CENTER);
 		frame.add(right, BorderLayout.EAST);
 
-		// Car Park Panel
+		// Panel garażu
 		JPanel pnlCarPark = new JPanel();
 		pnlCarPark.setLayout(new BorderLayout());
 		pnlCarPark.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder
@@ -76,7 +64,7 @@ public class GUI {
 		pnlLog.add(scroll, BorderLayout.CENTER);
 
 
-		// Car Park Panel
+		// Panel garażu
 		JLabel lblCarPark = new JLabel("Zaparkowane: ");
 		lblCarParkCapacity = new JLabel("Pojemność : ");
 		lblCarPark.setHorizontalAlignment(JLabel.CENTER);
@@ -88,11 +76,11 @@ public class GUI {
 		pnlCarPark.add(lblCarParkSize, BorderLayout.CENTER);
 		pnlCarPark.add(lblCarParkCapacity, BorderLayout.SOUTH);
 
-		// Create queue panels
+		// Panel koleki
 		JPanel pnlQueue = new JPanel();
 		pnlQueue.setLayout(new GridBagLayout());
 
-		// Queue 1
+		// Kolejka
 		lblQueue = new JLabel("Kolejka: ");
 		lblQueueSize = new JLabel("0");
 		lblQueueSize.setFont(lblQueueSize.getFont().deriveFont(fontSize));
@@ -100,7 +88,7 @@ public class GUI {
 		pnlQueue.add(lblQueueSize);
 
 
-		// Fill Main panels
+		// Wypełniamy główny Panel
 		left.add(new JPanel());
 		left.add(new JPanel());
 		left.add(pnlQueue);
@@ -111,7 +99,7 @@ public class GUI {
 	}
 
 	public void setLblQueueSize(int queue, int size) {
-		// Get correct label
+		// Pobieramy odpowiednią etykietę
 		JLabel lbl;
 		if (queue == 0) lbl = lblCarParkSize;
 		else lbl = lblQueueSize;
@@ -142,9 +130,7 @@ public class GUI {
 	}
 
 	/**
-	 * Appends the provided string to the log, colored with the provided color.
-	 * @param msg The string to be logged.
-	 * @param c The color of the log entry.
+	* Dodawanie wpisów do logu
 	 */
 	public void appendLogEntry(String msg, Color c) {
 		SwingUtilities.invokeLater(() -> {

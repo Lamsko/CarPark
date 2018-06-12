@@ -2,11 +2,11 @@ import java.awt.*;
 
 public class CarPark implements Runnable {
 	private Controller controller;
-	private Car[] parkedCars;       // Cars currently parked in the parking house
-	private Status[] statuses;      // The parking spots' statuses
-	private CarQueue queue;
-	private int garageCount;        // Number of cars in the parking house
-	private boolean operational;     // The parking house's operational statuses
+	private Car[] parkedCars;       // Samochody aktualnie zaparkowane na parkingu
+	private Status[] statuses;      // Status miejsc parkingowych (EMPTY, FILLED)
+	private CarQueue queue;          // Kolejka do wjazdu
+	private int garageCount;        // Ilosc samochodow na parkingu
+	private boolean operational;     // Informacja o tym czy parking działa
 	private int capacity;
 	private final Object mutex;
 	private Thread thread;
@@ -25,29 +25,29 @@ public class CarPark implements Runnable {
 	}
 
 	/**
-	 * Opens up the car park for business.
+	 * Otwarcie parkingu
 	 */
 	public void open() {
-		// Initialize operational values
+		// Inicjalizacja
 		garageCount = 0;
 		initStatuses();
 		parkedCars = new Car[capacity];
 
-		// Send capacity to GUI
+		// Wysyłamy pojemność do GUI
 		controller.setCarParkCapacity(capacity);
 
-		// Create queue, set their names and start their threads
+		// Utworzenie kolejki i start watku
 
 			queue = new CarQueue(controller, this,1, 10);
 			queue.start();
 
-		// Start car park thread
+		// Start watku parkingu
 		operational = true;
 		start();
 	}
 
 	/**
-	 * Fills the status array with EMPTY statuses
+	 * Ustawienie statusu miejsc parkingowych na EMPTY
 	 */
 	private void initStatuses() {
 		statuses = new Status[capacity];
@@ -57,8 +57,8 @@ public class CarPark implements Runnable {
 	}
 
 	/**
-	 * Check if there's an available parking spot.
-	 * @return The available parking spot if there is one, otherwise -1.
+	 * Sprawdzamy ilosc dostepnych miejsc parkingowych
+	 * -1 gdy brak
 	 */
 	public int getAvailableSpace() {
 		for (int i = 0; i < capacity; i++) {
@@ -70,59 +70,57 @@ public class CarPark implements Runnable {
 	}
 
 	/**
-	 * Parks the provided car in the car park.
-	 * @param car The car to be parked.
+	 * Parkujemy samochod w garażu
 	 */
 	public void park(Car car) {
 		synchronized (mutex) {
-			// Mark the spot as filled
+			// Oznaczenie miejsca jako FILLED
 			int spot = car.getParkingSpot();
 			statuses[spot] = Status.FILLED;
 			parkedCars[spot] = car;
 			garageCount++;
 
-			// Print to log
+			// Wypis w logu
 			controller.appendLogEntry("Samochód wjechał do garażu", Color.GREEN);
 
-			// Update GUI
+			// Aktualizacja GUI
 			controller.setLblQueueSize(0, garageCount);
 		}
 	}
 
 	/**
-	 * Unparks the provided car from the car park.
-	 * @param car The car to be unparked.
+	 * Wyjeżdżamy samochodem z parkingu
 	 */
 	public void unpark(Car car) {
 		synchronized (mutex) {
-			// Departure car
+			// Wyjazd samochodu
 			int spot = car.getParkingSpot();
 			statuses[spot] = Status.EMPTY;
 			parkedCars[spot] = null;
 			garageCount--;
 
-			// Print to log
+			// Wpis w logu
 			controller.appendLogEntry("Samochód wyjechał z garażu", Color.RED);
 
-			// Update GUI
+			// Aktualizacja GUI
 			controller.setLblQueueSize(0, garageCount);
 		}
 	}
 
 	/**
-	 * Loops through the filled parking spots and unparks the cars with expired parking times.
+	 * Petla po zaparkowanych samochodach odliczajaca czas do wyjazdu i wyparkowujaca samochody z licznikiem 0
 	 */
 	public void checkCars() {
-		// Loop through all parking spots
+		// Petla po wszystkich miejscach
 		for (int i = 0; i < capacity; i++) {
 
-			// If the spot if filled
+			// Jeśli miejsce zajete
 			if (statuses[i] == Status.FILLED) {
 
-				// Get car
+				// Pobieramy samochod
 				Car c = parkedCars[i];
 
-				// and the parking time of the car in that spot has expired
+				// i zmniejszamy licznik i sprawdzamy czy nalezy wyparkowac samochod
 				if (c != null) {
 					if (c.tick()) {
 						// Unpark car
@@ -135,10 +133,9 @@ public class CarPark implements Runnable {
 	}
 
 	/**
-	 * Checks if there's space in the car park,
-	 * then retrieves a car from one of the four queue,
-	 * then parks the car though an executor service that calls the cars run method.
-	 * Finally checks if there's any cars to unpark.
+	 * Jeśli uruchomiony sprawdza czy jest miejsce w garażu
+	 * Pobiera nastepny samochod z kolejki i parkuje samochod
+	 * Nastepnie sprawdza czy jest samochod do wyparkowania
 	 */
 	public void run() {
 		Car car;
@@ -146,25 +143,25 @@ public class CarPark implements Runnable {
 
 		while (operational) {
 
-			// Get open parking spot
+			// Pobiera wolne miejsce
 			next = getAvailableSpace();
 
-			// If there's an open parking spot
+			// Jeśli jest wolne miejsce
 			if (next != -1) {
 
-				// Get car from the randomized queue
+				// Pobiera samochod z kolejki
 				car = queue.getCar();
 				if (car != null) {
-					// Park the car
+					// Parkuje samochod
 					car.setParkingSpot(next);
 					car.run();
 				}
 			}
 
-			// Check car statues (and unpark if needed)
+			// Sprawdzamy status i odparkowywujemy jesli potrzeba
 			checkCars();
 
-			// Wait a bit
+			// Odczekujemy chwile
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {

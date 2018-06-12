@@ -14,17 +14,15 @@ public class Car implements Runnable {
 		generateParkingTime();
 	}
 
-	/**
-	 * Gives the car a parking time between minTime and maxTime.
-	 */
+
 	private void generateParkingTime() {
 		this.timer = random.nextInt(maxTime) + minTime;
 	}
 
 	/**
-	 * Decreases parking timer by one every time it's called.
+	 * Zmniejsza licznik parkowania o 1 przy każdym wywołaniu.
 	 *
-	 * @return True if parking timer is expired.
+	 * Zwraca True jeśli czas parkowania zakończony.
 	 */
 	public boolean tick() {
 		return (timer--) <= 0;
@@ -40,7 +38,7 @@ public class Car implements Runnable {
 
 	@Override
 	public void run() {
-		// Park the car
+		// Zaparkuj samochod
 		carPark.park(this);
 	}
 }
