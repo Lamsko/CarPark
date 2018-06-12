@@ -28,7 +28,7 @@ public class GUI {
 		frame.setVisible(true);
 		frame.setResizable(false);			// Zablokowanie zmiany rozmiaru
 		frame.setLocationRelativeTo(null);	// Wyśrodkowanie
-		CarPark carPark = new CarPark(controller, 10);
+		CarPark carPark = new CarPark(controller, 10); //utworzenie garażu
 		carPark.open();
 	}
 
